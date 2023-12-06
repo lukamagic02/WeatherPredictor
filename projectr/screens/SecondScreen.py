@@ -8,18 +8,16 @@ from meteostat import Point, Hourly, Daily, Monthly
 def fetch_data(location, granularity, start, end):
     if granularity == "day":
         data = Hourly(location, start, end)
-        data = data.fetch()
     elif granularity == "week":
         # dodati funkciju za obraditi tjedan
         data = Daily(location, start, end)
-        data = data.fetch()
     elif granularity == "month":
         data = Monthly(location, start, end)
-        data = data.fetch()
     else:
         # funkcija za obraditi cijelu godinu
         data = Monthly(location, start, end)
-        data = data.fetch()
+
+    data = data.fetch()
 
     return data
 
@@ -33,7 +31,7 @@ def plot_graphs(data, key, label):
     ax.plot(x_data, y_data, label=label)
 
     plt.xticks(x_data)  # da se ne prikazuje vrijeme, nego samo datum
-    # bez ove linije pokazuje isti datum 2puta: u 12h i 00h
+    # bez ove linije pokazuje isti datum 2puta, ali u razlicitim satima: u 12h i 00h
 
     ax.set_xlabel('Time')
     ax.set_ylabel(f'{label.split()[0]}')
@@ -52,14 +50,26 @@ class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
 
-    def on_pre_enter(self, *args):  # izvodi funkciju prije nego što odemo na secondScreen
+    def on_pre_enter(self, *args):  # izvodi funkciju neposredno prije što odemo na secondScreen
         self.create_matplotlib_plot()
 
     # staviti nyc kao globalnu varijablu?
     def create_matplotlib_plot(self):
 
-        self.ids.plot1.source = ''
-        self.ids.plot1.nocache = True  # da ucita novu sliku
+        images = ['plot1', 'plot2', 'plot3']
+        boxes = ['box1', 'box2', 'box3']
+
+        for id_img in images:
+            getattr(self.ids, id_img).source = ''
+            getattr(self.ids, id_img).size_hint = (None, None)
+            getattr(self.ids, id_img).height = 0
+            getattr(self.ids, id_img).nocache = True  # da prilikom svakog submita ucita novu sliku
+
+        for id_box in boxes:
+            getattr(self.ids, id_box).size_hint = (None, None)
+            getattr(self.ids, id_box).height = 0
+            getattr(self.ids, id_box).opacity = 0
+
 
         nyc = Point(40.7789, -73.9692, 3)
         globalData = GlobalData()
@@ -79,14 +89,29 @@ class SecondScreen(Screen):
             if choice == "temperature":
                 key = "temp" if granularity == "day" else "tavg"
                 label = "Temperature data"
+                id_img = 'plot1'
+                id_box = 'box1'
 
             elif choice == "amount of precipitation":
                 key = "prcp"
                 label = "Precipitation data"
+                id_img = 'plot2'
+                id_box = 'box2'
 
             else:
                 key = "pres"
                 label = "Pressure data"
+                id_img = 'plot3'
+                id_box = 'box3'
 
             graph = plot_graphs(data, key, label)
-            self.ids.plot1.source = graph
+            getattr(self.ids, id_img).source = graph
+
+            # prikaz grafa u aplikaciji ako je kategorija odabrana
+            getattr(self.ids, id_img).size_hint = (1, None)
+            getattr(self.ids, id_img).height = 500
+
+            # prikaz deskriptivne statistike ispod slike
+            getattr(self.ids, id_box).size_hint = (1, None)
+            getattr(self.ids, id_box).height = 70
+            getattr(self.ids, id_box).opacity = 1

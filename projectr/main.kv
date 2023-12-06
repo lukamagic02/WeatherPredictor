@@ -82,29 +82,98 @@ ScreenManager:
                     MDTopAppBar:
                         title: "Weather Prediction Application"
                         left_action_items : [["menu", lambda x: nav_drawer.set_state()]]
-                    Widget:
+                    ScrollView:
+                        bar_width: 12
 
-                Image:
-                    id: plot1
-                    source: ''
-                    allow_stretch: False
-                    keep_ratio: True
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        BoxLayout:
+                            orientation: "vertical"
+                            padding: 100
+                            size_hint_y: None
+                            height: self.minimum_height
+                            Image:
+                                id: plot1
+                                source: ''
+                                allow_stretch: False
+                                keep_ratio: True
+                                size_hint: (None, None)
+                                height: 0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
-                BoxLayout:
-                    orientation: "horizontal"
-                    spacing: 10  # Adjust the spacing between labels
-                    padding: 10  # Adjust the padding around the layout
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.1}
-                    Label:
-                        text: "Stand. Dev. = ?"
-                        color: 0, 0, 0, 1
-                    Label:
-                        text: "Avg. = ?"
-                        color: 0, 0, 0, 1
-                    Label:
-                        text: "Median = ?"
-                        color: 0, 0, 0, 1
+                            BoxLayout:
+                                id: box1
+                                orientation: "horizontal"
+                                spacing: 10  # Adjust the spacing between labels
+                                padding: 10  # Adjust the padding around the layout
+                                size_hint: (None, None)
+                                height: 0
+                                opacity:0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+                                Label:
+                                    text: "Stand. Dev. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Avg. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Median = ?"
+                                    color: 0, 0, 0, 1
+
+                            Image:
+                                id: plot2
+                                source: 'temp_plot.png'
+                                allow_stretch: False
+                                keep_ratio: True
+                                size_hint: (None, None)
+                                height: 0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                            BoxLayout:
+                                id: box2
+                                orientation: "horizontal"
+                                spacing: 10  # Adjust the spacing between labels
+                                padding: 10  # Adjust the padding around the layout
+                                size_hint: (None, None)
+                                height: 0
+                                opacity:0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+                                Label:
+                                    text: "Stand. Dev. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Avg. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Median = ?"
+                                    color: 0, 0, 0, 1
+
+                            Image:
+                                id: plot3
+                                source: 'temp_plot.png'
+                                allow_stretch: False
+                                keep_ratio: True
+                                size_hint: (None, None)
+                                height: 0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                            BoxLayout:
+                                id: box3
+                                orientation: "horizontal"
+                                spacing: 10  # Adjust the spacing between labels
+                                padding: 10  # Adjust the padding around the layout
+                                size_hint: (None, None)
+                                height: 0
+                                opacity:0
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+                                Label:
+                                    text: "Stand. Dev. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Avg. = ?"
+                                    color: 0, 0, 0, 1
+                                Label:
+                                    text: "Median = ?"
+                                    color: 0, 0, 0, 1
+
 
         MDNavigationDrawer:
             id: nav_drawer
