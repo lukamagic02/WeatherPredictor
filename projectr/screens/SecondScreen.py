@@ -1,3 +1,6 @@
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 import matplotlib.pyplot as plt
 from projectr.data.GlobalData import GlobalData
@@ -46,6 +49,29 @@ def plot_graphs(data, key, label):
     return 'plot.png'
 
 
+def add_graph(main_layout, graph_source):
+    # dodavanje Image i BoxLayout
+
+    new_image = Image(source=graph_source, allow_stretch=False, keep_ratio=True,
+                      size_hint=(1, None), height=500, pos_hint={'center_x': 0.5, 'center_y': 0.5}, nocache=True)
+    box_layout = BoxLayout(orientation='horizontal', padding=10, spacing=10, size_hint=(1, None),
+                           height=70, pos_hint={'center_x': 0.5, 'center_y': 0.1})
+
+    labels = [
+        Label(text="New Stand. Dev. = ?", color=(0, 0, 0, 1)),
+        Label(text="New Avg. = ?", color=(0, 0, 0, 1)),
+        Label(text="New Median = ?", color=(0, 0, 0, 1))
+    ]
+
+    for label in labels:
+        box_layout.add_widget(label)
+
+    main_layout.add_widget(new_image)
+    main_layout.add_widget(box_layout)
+
+    return
+
+
 class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
@@ -54,22 +80,9 @@ class SecondScreen(Screen):
         self.create_matplotlib_plot()
 
     # staviti nyc kao globalnu varijablu?
+
     def create_matplotlib_plot(self):
-
-        images = ['plot1', 'plot2', 'plot3']
-        boxes = ['box1', 'box2', 'box3']
-
-        for id_img in images:
-            getattr(self.ids, id_img).source = ''
-            getattr(self.ids, id_img).size_hint = (None, None)
-            getattr(self.ids, id_img).height = 0
-            getattr(self.ids, id_img).nocache = True  # da prilikom svakog submita ucita novu sliku
-
-        for id_box in boxes:
-            getattr(self.ids, id_box).size_hint = (None, None)
-            getattr(self.ids, id_box).height = 0
-            getattr(self.ids, id_box).opacity = 0
-
+        self.ids.main_box.clear_widgets() #prilikom svakog submita čisti prethodne grafove
 
         nyc = Point(40.7789, -73.9692, 3)
         globalData = GlobalData()
@@ -89,29 +102,15 @@ class SecondScreen(Screen):
             if choice == "temperature":
                 key = "temp" if granularity == "day" else "tavg"
                 label = "Temperature data"
-                id_img = 'plot1'
-                id_box = 'box1'
 
             elif choice == "amount of precipitation":
                 key = "prcp"
                 label = "Precipitation data"
-                id_img = 'plot2'
-                id_box = 'box2'
 
             else:
                 key = "pres"
                 label = "Pressure data"
-                id_img = 'plot3'
-                id_box = 'box3'
 
             graph = plot_graphs(data, key, label)
-            getattr(self.ids, id_img).source = graph
+            add_graph(self.ids.main_box, graph)  # dodajemo graf dinamički na secondScreen
 
-            # prikaz grafa u aplikaciji ako je kategorija odabrana
-            getattr(self.ids, id_img).size_hint = (1, None)
-            getattr(self.ids, id_img).height = 500
-
-            # prikaz deskriptivne statistike ispod slike
-            getattr(self.ids, id_box).size_hint = (1, None)
-            getattr(self.ids, id_box).height = 70
-            getattr(self.ids, id_box).opacity = 1
