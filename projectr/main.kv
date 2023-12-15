@@ -99,6 +99,8 @@ ScreenManager:
             BoxLayout:
                 orientation: 'vertical'
 
+
+
                 ScrollView:
                     MDList:
                         OneLineIconListItem:
@@ -109,6 +111,7 @@ ScreenManager:
 
                         OneLineIconListItem:
                             text: "Download Data"
+                            on_press: root.download_data_summary()
                             IconLeftWidget:
                                 icon: "file-chart"
 
@@ -119,3 +122,4 @@ ScreenManager:
                             text: "HomePage"
                             IconLeftWidget:
                                 icon: "logout"
+
