@@ -1,9 +1,10 @@
+from kivy.uix.label import Label
+from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import OneLineAvatarListItem
 from kivymd.uix.pickers import MDDatePicker
-
 from projectr.data.GlobalData import GlobalData
 
 
@@ -57,20 +58,28 @@ class ItemDataType(OneLineAvatarListItem):
 class HomeScreen(Screen):
     dialogData = None
     dialogGranularity = None
+    dialogDate = None
 
     def on_save(self, instance, value, date_range):
-        global_data = GlobalData()
-        self.ids.date_label.text = f"Date chosen: {date_range[0]} || {date_range[-1]}"
-        global_data.set_value("start_date", date_range[0])
-        global_data.set_value("end_date", date_range[-1])
+        if len(date_range) == 0:
+            error_popup = Popup(title='Invalid Date Range',
+                                content=Label(text='Please enter a valid date range.'),
+                                size_hint=(None, None), size=(400, 200))
+            error_popup.open()
+        else:
+            global_data = GlobalData()
+            self.ids.date_label.text = f"Date chosen: {date_range[0]} || {date_range[-1]}"
+            global_data.set_value("start_date", date_range[0])
+            global_data.set_value("end_date", date_range[-1])
 
     def on_cancel(self, instance, value):
-        self.dialog.dismiss()
+        self.dialogDate.dismiss()
 
     def show_date_picker(self):
-        date_dialog = MDDatePicker(mode="range")
-        date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
-        date_dialog.open()
+        if not self.dialogDate:
+            self.dialogDate = MDDatePicker(mode="range")
+            self.dialogDate.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+        self.dialogDate.open()
 
     def show_granularity(self):
         if not self.dialogGranularity:

@@ -1,25 +1,21 @@
-import shutil
-
 import numpy as np
 import os
-from kivy.uix.filechooser import FileChooserListView, FileChooserIconView
+import matplotlib.pyplot as plt
 
+from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.button import Button
-from kivy.network.urlrequest import UrlRequest
-from kivy_garden.filebrowser import FileBrowser
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
-import matplotlib.pyplot as plt
 from projectr.data.GlobalData import GlobalData
 from datetime import datetime
 from meteostat import Point, Hourly, Daily, Monthly
 
 
-#Treba se ovo promijeniti
-#Ako potrebno mijenjati 168. liniju: ako se negdje koristi f-ja Hourly, za nju je temp, za ostale tavg
+# Treba se ovo promijeniti
+# Ako potrebno mijenjati 168. liniju: ako se negdje koristi f-ja Hourly, za nju je temp, za ostale tavg
 def fetch_data(location, granularity, start, end):
     if granularity == "day":
         data = Daily(location, start, end)
@@ -27,18 +23,17 @@ def fetch_data(location, granularity, start, end):
     elif granularity == "week":
         daily_data = Hourly(location, start, end)
         data = daily_data.aggregate('W-Mon', 'mean')
-        #W oznacava tjedno grupiranje,
+        # W oznacava tjedno grupiranje,
         # a Mon da pocetak ciklusa
-        #na kraju izracunamo srednju vrijednost uz pomoc mean
-
+        # na kraju izracunamo srednju vrijednost uz pomoc mean
 
     elif granularity == "month":
         data = Monthly(location, start, end)
+
     else:
         # funkcija za obraditi cijelu godinu
         monthly_data = Monthly(location, start, end)
         data = monthly_data.aggregate('Y', 'mean')
-
 
     data = data.fetch()
 
@@ -68,7 +63,8 @@ def plot_graphs(data, key, label):
 
     return 'plot.png'
 
-def data_to_txt_file(file_path, data_summary): #data_sum su razl vrste podataka(temp, tlak, padaline)
+
+def data_to_txt_file(file_path, data_summary):  # data_sum su razl vrste podataka(temp, tlak, padaline)
     with open(f"{file_path}.txt", 'a') as file:
         for data_type, data_info in data_summary.items():
             values = data_info['values']
@@ -83,12 +79,10 @@ def data_to_txt_file(file_path, data_summary): #data_sum su razl vrste podataka(
             file.write(f"Median: {median:.2f}\n\n")
 
 
-
 def add_graph(main_layout, graph_source, values, key):
-
     # Izračunaj statističke vrednosti
     values = np.array(values)
-    values = values[~np.isnan(values)] #ako nemamo pod za neki mjesec/god/dan/tjedan jos, ignoriramo
+    values = values[~np.isnan(values)]  # ako nemamo pod za neki mjesec/god/dan/tjedan jos, ignoriramo
 
     # Ako nema valjanih podataka
     if len(values) == 0:
@@ -131,23 +125,17 @@ class SecondScreen(Screen):
 
     # staviti nyc kao globalnu varijablu?
 
-
-
-
     def create_matplotlib_plot(self):
 
-        self.ids.main_box.clear_widgets() #prilikom svakog submita čisti prethodne grafove
+        self.ids.main_box.clear_widgets()  # prilikom svakog submita čisti prethodne grafove
 
         file_name = 'data_summary.txt'
-        #zelim da mi se izbrisu prijasni podatci u slucaju da postoje
+        # zelim da mi se izbrisu prijasni podatci u slucaju da postoje
         if os.path.exists(file_name):
             # otvaranje datoteke u "write" načinu brisanja postojećeg sadržaja
             with open(file_name, 'w') as file:
-                #pisanje praznog niza u datoteku
+                # pisanje praznog niza u datoteku
                 file.write('')
-
-
-
 
         nyc = Point(40.7789, -73.9692, 3)
         globalData = GlobalData()
@@ -164,15 +152,11 @@ class SecondScreen(Screen):
         data = fetch_data(nyc, granularity, start, end)
         print(data.head())
 
-
-
-
         for choice in dataChoice:
             values = 0
             if choice == "temperature":
                 key = "temp" if granularity == "week" else "tavg"
                 label = "Temperature data"
-
 
             elif choice == "amount of precipitation":
                 key = "prcp"
@@ -182,17 +166,14 @@ class SecondScreen(Screen):
                 key = "pres"
                 label = "Pressure data"
 
-
-
             # Izračunaj statističke vrijednosti
             values = data[key].tolist()
 
             graph = plot_graphs(data, key, label)
             add_graph(self.ids.main_box, graph, values, key)  # dodajemo graf dinamički na secondScreen
 
-
     def download_data_summary(self):
-        #otvara prozor za odabir datoteke pomoću FileChooserListView
+        # otvara prozor za odabir datoteke pomoću FileChooserListView
         content = FileChooserListView()
         popup = Popup(title="Odaberite mjesto za spremanje datoteke", content=content, size_hint=(0.8, 0.8))
 
@@ -208,7 +189,7 @@ class SecondScreen(Screen):
 
         save_button = Button(text="Spremi", size_hint_y=None, height=40)
 
-        #tu pozivamo save_callback i spremamo dat kad kliknemo spremi
+        # tu pozivamo save_callback i spremamo dat kad kliknemo spremi
         save_button.bind(on_release=lambda x: save_callback(content.path, "data_summary.txt"))
         content.add_widget(save_button)
 
