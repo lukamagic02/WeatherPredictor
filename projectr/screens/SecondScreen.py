@@ -11,38 +11,14 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from projectr.data.GlobalData import GlobalData
 from datetime import datetime
-from meteostat import Point, Hourly, Daily, Monthly
+from meteostat import Point
+
+from projectr.dataAnalysis.dataAnalysis import fetch_data
 
 
-# Treba se ovo promijeniti
-# Ako potrebno mijenjati 168. liniju: ako se negdje koristi f-ja Hourly, za nju je temp, za ostale tavg
-def fetch_data(location, granularity, start, end):
-    if granularity == "day":
-        data = Daily(location, start, end)
-
-    elif granularity == "week":
-        daily_data = Hourly(location, start, end)
-        data = daily_data.aggregate('W-Mon', 'mean')
-        # W oznacava tjedno grupiranje,
-        # a Mon da pocetak ciklusa
-        # na kraju izracunamo srednju vrijednost uz pomoc mean
-
-    elif granularity == "month":
-        data = Monthly(location, start, end)
-
-    else:
-        # funkcija za obraditi cijelu godinu
-        monthly_data = Monthly(location, start, end)
-        data = monthly_data.aggregate('Y', 'mean')
-
-    data = data.fetch()
-
-    return data
-
-
-def plot_graphs(data, key, label):
-    x_data = data.index.values  # vraća vrijeme
-    y_data = data[key]
+def plot_graphs(data, dates, label):
+    x_data = dates
+    y_data = data
 
     fig, ax = plt.subplots()
 
@@ -82,7 +58,6 @@ def data_to_txt_file(file_path, data_summary):  # data_sum su razl vrste podatak
 def add_graph(main_layout, graph_source, values, key):
     # Izračunaj statističke vrednosti
     values = np.array(values)
-    values = values[~np.isnan(values)]  # ako nemamo pod za neki mjesec/god/dan/tjedan jos, ignoriramo
 
     # Ako nema valjanih podataka
     if len(values) == 0:
@@ -148,14 +123,12 @@ class SecondScreen(Screen):
         start = datetime.combine(startDate, datetime.min.time())
         end = datetime.combine(endDate, datetime.max.time())
 
-        # dohvaćamo podatke s meteostata
-        data = fetch_data(nyc, granularity, start, end)
-        print(data.head())
-
+        key = ""
+        label = ""
         for choice in dataChoice:
             values = 0
             if choice == "temperature":
-                key = "temp" if granularity == "week" else "tavg"
+                key = "temp"
                 label = "Temperature data"
 
             elif choice == "amount of precipitation":
@@ -166,11 +139,11 @@ class SecondScreen(Screen):
                 key = "pres"
                 label = "Pressure data"
 
-            # Izračunaj statističke vrijednosti
-            values = data[key].tolist()
+            # dohvaćamo podatke s meteostata
+            data, dates = fetch_data(nyc, granularity, start, end, key)
 
-            graph = plot_graphs(data, key, label)
-            add_graph(self.ids.main_box, graph, values, key)  # dodajemo graf dinamički na secondScreen
+            graph = plot_graphs(data, dates, label)
+            add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen
 
     def download_data_summary(self):
         # otvara prozor za odabir datoteke pomoću FileChooserListView
