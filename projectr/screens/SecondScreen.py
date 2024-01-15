@@ -16,13 +16,34 @@ from meteostat import Point
 from projectr.dataAnalysis.dataAnalysis import fetch_data
 
 
-def plot_graphs(data, dates, label):
+def plot_graphs(data, dates, label, values):
     x_data = dates
     y_data = data
+
+    values = np.array(values)
+    values=values[~np.isnan(values)]
+
+    # Ako nema valjanih podataka
+    if len(values) == 0:
+        return
+
+    mean = np.mean(values)
+    stand_dev = np.std(values)
 
     fig, ax = plt.subplots()
 
     ax.plot(x_data, y_data, label=label)
+
+    for x in range(len(x_data)):
+        if np.abs(y_data[x] - mean) > 2 * stand_dev:
+            ax.scatter(x_data[x], y_data[x], color='magenta', s=100)
+
+    ax.scatter([], [], color='magenta', s=50, label='Mean ± 2*SD')
+
+
+    #ax.fill_between(x_data, mean + 2 * stand_dev, y_data, where=np.abs(y_data - mean) > 2 * stand_dev, color='red', alpha=0.7, linewidth=2)
+
+    plt.xticks(rotation=35, fontsize=8)
 
     plt.xticks(x_data)  # da se ne prikazuje vrijeme, nego samo datum
     # bez ove linije pokazuje isti datum 2puta, ali u razlicitim satima: u 12h i 00h
@@ -31,7 +52,7 @@ def plot_graphs(data, dates, label):
     ax.set_ylabel(f'{label.split()[0]}')
     ax.set_title(f'NYC {label.capitalize()}')
 
-    ax.legend()
+    plt.subplots_adjust(bottom=0.2, left=0.1, right=0.9, top=0.9)
 
     plt.savefig('plot.png')
 
@@ -142,7 +163,7 @@ class SecondScreen(Screen):
             # dohvaćamo podatke s meteostata
             data, dates = fetch_data(nyc, granularity, start, end, key)
 
-            graph = plot_graphs(data, dates, label)
+            graph = plot_graphs(data, dates, label, data)
             add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen
 
     def download_data_summary(self):

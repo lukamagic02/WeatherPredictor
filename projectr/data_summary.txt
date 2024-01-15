@@ -1,0 +1,18 @@
+Temp Data:
+Values: [-2.4 -1.8  0.9  3.9  0.5  1.5  4.2  1.5 -0.8]
+Standard Deviation: 2.16
+Mean: 0.83
+Median: 0.90
+
+Prcp Data:
+Values: [   75.6   110.8    89.7 12556.7  3612.2   104.2    38.4    54.6    98.4]
+Standard Deviation: 3938.85
+Mean: 1860.07
+Median: 98.40
+
+Pres Data:
+Values: [1017.2 1019.8 1016.1 1026.8 1022.3 1018.3 1020.  1016.1 1018.7]
+Standard Deviation: 3.20
+Mean: 1019.48
+Median: 1018.70
+
