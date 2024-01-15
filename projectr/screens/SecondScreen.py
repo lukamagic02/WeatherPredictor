@@ -52,7 +52,8 @@ def plot_graphs(data, dates, label, values):
     ax.set_ylabel(f'{label.split()[0]}')
     ax.set_title(f'NYC {label.capitalize()}')
 
-    plt.subplots_adjust(bottom=0.2, left=0.1, right=0.9, top=0.9)
+    ax.legend()
+    plt.subplots_adjust(bottom=0.2, left=0.1, right=0.9, top=0.9) #prilagođavamo veličinu grafa kako bi nazivi x i y osi stali u sliku
 
     plt.savefig('plot.png')
 

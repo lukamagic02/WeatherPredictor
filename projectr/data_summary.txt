@@ -1,18 +1,20 @@
 Temp Data:
-Values: [-2.4 -1.8  0.9  3.9  0.5  1.5  4.2  1.5 -0.8]
-Standard Deviation: 2.16
-Mean: 0.83
-Median: 0.90
+Values: [-7.9 -6.4  2.6 -1.5  6.1 -1.5  2.9  5.9 -1.6  3.   3.5]
+Standard Deviation: 4.44
+Mean: 0.46
+Median: 2.60
 
 Prcp Data:
-Values: [   75.6   110.8    89.7 12556.7  3612.2   104.2    38.4    54.6    98.4]
-Standard Deviation: 3938.85
-Mean: 1860.07
-Median: 98.40
+Values: [3.000e-01 1.700e+00 0.000e+00 0.000e+00 5.107e+02 0.000e+00 2.000e-01
+ 1.520e+01 0.000e+00 0.000e+00 4.700e+00]
+Standard Deviation: 146.25
+Mean: 48.44
+Median: 0.20
 
 Pres Data:
-Values: [1017.2 1019.8 1016.1 1026.8 1022.3 1018.3 1020.  1016.1 1018.7]
-Standard Deviation: 3.20
-Mean: 1019.48
-Median: 1018.70
+Values: [1028.  1010.7 1003.7 1022.9 1027.1 1025.6 1011.8 1018.1 1020.1 1013.5
+ 1023.4]
+Standard Deviation: 7.45
+Mean: 1018.63
+Median: 1020.10
 
