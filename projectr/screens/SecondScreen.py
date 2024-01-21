@@ -13,6 +13,7 @@ from datetime import datetime
 from meteostat import Point
 
 from projectr.dataAnalysis.dataAnalysis import fetch_data
+from projectr.linreg.linreg import predict_value
 
 
 def plot_graphs(data, dates, label, values):
@@ -162,6 +163,10 @@ class SecondScreen(Screen):
 
             # dohvaćamo podatke s meteostata
             data, dates = fetch_data(nyc, granularity, start, end, key)
+            if len(data) >= 2:
+                nextData, nextDate = predict_value(dates, data)
+                data = np.append(data, nextData)
+                dates = np.append(dates, nextDate)
 
             graph = plot_graphs(data, dates, label, data)
             add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen

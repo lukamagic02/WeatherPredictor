@@ -27,4 +27,9 @@ def estimate_intercept(slope, feature_mean, response_mean):
 # 'responses': a one-dimensional NumPy array that contains values for those years
 def predict_value(features, responses):
     slope, feature_mean, response_mean = estimate_slope(features, responses)
-    return estimate_intercept(slope, feature_mean, response_mean) + slope * (features[-1] + 1)
+    return (
+        estimate_intercept(slope, feature_mean, response_mean) +
+        slope * (features[-1] + 1),
+        features[-1] + 1
+    )
+
