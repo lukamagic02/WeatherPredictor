@@ -1,7 +1,6 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-
 from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
@@ -168,24 +167,31 @@ class SecondScreen(Screen):
             add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen
 
     def download_data_summary(self):
-        # otvara prozor za odabir datoteke pomoću FileChooserListView
-        content = FileChooserListView()
-        popup = Popup(title="Odaberite mjesto za spremanje datoteke", content=content, size_hint=(0.8, 0.8))
-
-        def save_callback(selected_path, selected_filename):
-            # Kopiraj datoteku na tu lokaciju
+        def save_callback(selected_path):
             try:
+                filename = "data_summary.txt"
                 with open("data_summary.txt", "r") as source_file, open(
-                        os.path.join(selected_path, selected_filename), "w") as dest_file:
+                        os.path.join(selected_path, filename), "w") as dest_file:
                     dest_file.write(source_file.read())
                 popup.dismiss()
             except Exception as e:
                 print(f"Error: {e}")
 
-        save_button = Button(text="Spremi", size_hint_y=None, height=40)
+        file_chooser = FileChooserListView()
+        file_chooser.path = os.path.sep  # Initial directory
 
-        # tu pozivamo save_callback i spremamo dat kad kliknemo spremi
-        save_button.bind(on_release=lambda x: save_callback(content.path, "data_summary.txt"))
-        content.add_widget(save_button)
+        save_button = Button(text="Spremi", size_hint_y=None, height=40)
+        save_button.bind(on_release=lambda x: save_callback(file_chooser.path))
+
+        box_layout = BoxLayout(orientation="vertical", spacing=10, padding=10)
+        box_layout.add_widget(file_chooser)
+        box_layout.add_widget(save_button)
+
+        popup = Popup(
+            title="Odaberite mjesto za spremanje datoteke",
+            content=box_layout,
+            size_hint=(0.8, 0.8),
+        )
 
         popup.open()
+
