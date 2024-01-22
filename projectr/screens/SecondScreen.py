@@ -16,15 +16,15 @@ from projectr.dataAnalysis.dataAnalysis import DataAnalysis
 from projectr.linreg.linreg import LinReg
 
 
-def plot_graphs(data, dates, label, values):
+def plot_graphs(data, dates, label):
     x_data = dates
     y_data = data
 
-    values = np.array(values)
-    values=values[~np.isnan(values)]
+    values = np.array(data)
+    values = values[~np.isnan(values)]
 
     # Ako nema valjanih podataka
-    if len(values) == 0:
+    if len(data) == 0:
         return
 
     mean = np.mean(values)
@@ -39,7 +39,8 @@ def plot_graphs(data, dates, label, values):
             ax.scatter(x_data[x], y_data[x], color='magenta', s=100)
 
     ax.scatter([], [], color='magenta', s=50, label='Mean ± 2*SD')
-
+    #if len(data) > 1:
+    ax.fill_between(x_data[-2:], np.min(y_data), np.max(y_data), color='purple', alpha=0.2, label='Prediction Interval')
 
     #ax.fill_between(x_data, mean + 2 * stand_dev, y_data, where=np.abs(y_data - mean) > 2 * stand_dev, color='red', alpha=0.7, linewidth=2)
 
@@ -168,7 +169,7 @@ class SecondScreen(Screen):
                 data = np.append(data, nextData)
                 dates = np.append(dates, nextDate)
 
-            graph = plot_graphs(data, dates, label, data)
+            graph = plot_graphs(data, dates, label)
             add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen
 
     def download_data_summary(self):
