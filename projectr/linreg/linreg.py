@@ -5,8 +5,8 @@ class LinReg:
     # method used for slope estimation
     @staticmethod
     def estimate_slope(features, responses):
-        if len(features) == 0 or len(responses) == 0 or len(features) != len(responses):
-            raise ValueError("Input arrays must be non-empty and have the same length.")
+        if len(features) <= 1 or len(responses) <= 1 or len(features) != len(responses):
+            raise ValueError("Input arrays must have >= 2 elements and be the same length.")
 
         feature_mean = np.mean(features)
         response_mean = np.mean(responses)
