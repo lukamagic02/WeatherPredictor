@@ -76,6 +76,7 @@ class DataAnalysis:
 
         filtered_data = []
         filtered_dates = []
+        predictionDate=""
 
         """
             Filtering data based on granularity.    
@@ -92,8 +93,10 @@ class DataAnalysis:
                 if oldEnd.day == dates[i].day and oldEnd.month == dates[i].month:
                     filtered_data.append(data[i])
                     filtered_dates.append(dates[i].year)
+                    predictionDate=str(dates[i].day) + "." + str(dates[i].month)+"."
         elif granularity == "week":
             startOfWeek = oldEnd - datetime.timedelta(days=6)
+            predictionDate=str(startOfWeek.day) +"."+str(startOfWeek.month) +".-"+str(oldEnd.day)+"."+str(oldEnd.month)+"."
             i = 0
             newWeek = []
             while i < len(dates):
@@ -129,11 +132,13 @@ class DataAnalysis:
                 if oldEnd.month == dates[i].month:
                     filtered_data.append(data[i])
                     filtered_dates.append(dates[i].year)
+                    predictionDate=str(dates[i].month) + ". month"
         else:
             for i in range(len(dates)):
                 if i > 0 and dates[i].year - dates[i-1].year > 1:
                     break
                 filtered_data.append(data[i])
                 filtered_dates.append(dates[i].year)
+                predictionDate=""
 
-        return filtered_data, filtered_dates
+        return filtered_data, filtered_dates, predictionDate

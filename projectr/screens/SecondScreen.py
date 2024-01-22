@@ -34,9 +34,12 @@ def plot_graphs(data, dates, label):
 
     ax.plot(x_data, y_data, label=label)
 
-    for x in range(len(x_data)):
-        if np.abs(y_data[x] - mean) > 2 * stand_dev:
-            ax.scatter(x_data[x], y_data[x], color='magenta', s=100)
+    if len(data) == 1:
+        ax.scatter(x_data[0], y_data[0], color=None, s=50)
+    else:
+        for x in range(len(x_data)):
+            if np.abs(y_data[x] - mean) > 2 * stand_dev:
+                ax.scatter(x_data[x], y_data[x], color='magenta', s=100)
 
     ax.scatter([], [], color='magenta', s=50, label='Mean ± 2*SD')
     #if len(data) > 1:
@@ -54,7 +57,7 @@ def plot_graphs(data, dates, label):
     ax.set_title(f'NYC {label.capitalize()}')
 
     ax.legend()
-    plt.subplots_adjust(bottom=0.2, left=0.1, right=0.9, top=0.9) #prilagođavamo veličinu grafa kako bi nazivi x i y osi stali u sliku
+    plt.subplots_adjust(bottom=0.2, left=0.2, right=0.9, top=0.9) #prilagođavamo veličinu grafa kako bi nazivi x i y osi stali u sliku
 
     plt.savefig('plot.png')
 
@@ -78,7 +81,7 @@ def data_to_txt_file(file_path, data_summary):  # data_sum su razl vrste podatak
             file.write(f"Median: {median:.2f}\n\n")
 
 
-def add_graph(main_layout, graph_source, values, key):
+def add_graph(main_layout, graph_source, values, key, newDate):
     # Izračunaj statističke vrednosti
     values = np.array(values)
 
@@ -96,6 +99,12 @@ def add_graph(main_layout, graph_source, values, key):
     box_layout = BoxLayout(orientation='horizontal', padding=10, spacing=10, size_hint=(1, None),
                            height=70, pos_hint={'center_x': 0.5, 'center_y': 0.1})
 
+    if newDate != "":
+        text_box_layout = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint=(1, None),
+                                    height=70)
+        text_label = Label(text=f"Data is displayed for interval: {newDate}", color=(0, 0, 0, 1))
+        text_box_layout.add_widget(text_label)
+
     labels = [
         Label(text=f"New Stand. Dev. = {stand_dev:.2f}", color=(0, 0, 0, 1)),
         Label(text=f"New Mean = {mean:.2f}", color=(0, 0, 0, 1)),
@@ -106,6 +115,8 @@ def add_graph(main_layout, graph_source, values, key):
         box_layout.add_widget(label)
 
     main_layout.add_widget(new_image)
+    if newDate != "":
+        main_layout.add_widget(text_box_layout)
     main_layout.add_widget(box_layout)
     data_summary = {key: {'values': values, 'mean': mean, 'stand_dev': stand_dev, 'median': median}}
 
@@ -163,14 +174,14 @@ class SecondScreen(Screen):
                 label = "Pressure data"
 
             # dohvaćamo podatke s meteostata
-            data, dates = DataAnalysis.fetch_data(nyc, granularity, start, end, key)
+            data, dates, newDate = DataAnalysis.fetch_data(nyc, granularity, start, end, key)
             if len(data) >= 2:
                 nextData, nextDate = LinReg.predict_value(dates, data)
                 data = np.append(data, nextData)
                 dates = np.append(dates, nextDate)
 
             graph = plot_graphs(data, dates, label)
-            add_graph(self.ids.main_box, graph, data, key)  # dodajemo graf dinamički na secondScreen
+            add_graph(self.ids.main_box, graph, data, key, newDate)  # dodajemo graf dinamički na secondScreen
 
     def download_data_summary(self):
         def save_callback(selected_path):
