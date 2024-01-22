@@ -12,8 +12,8 @@ from projectr.data.GlobalData import GlobalData
 from datetime import datetime
 from meteostat import Point
 
-from projectr.dataAnalysis.dataAnalysis import fetch_data
-from projectr.linreg.linreg import predict_value
+from projectr.dataAnalysis.dataAnalysis import DataAnalysis
+from projectr.linreg.linreg import LinReg
 
 
 def plot_graphs(data, dates, label, values):
@@ -162,9 +162,9 @@ class SecondScreen(Screen):
                 label = "Pressure data"
 
             # dohvaćamo podatke s meteostata
-            data, dates = fetch_data(nyc, granularity, start, end, key)
+            data, dates = DataAnalysis.fetch_data(nyc, granularity, start, end, key)
             if len(data) >= 2:
-                nextData, nextDate = predict_value(dates, data)
+                nextData, nextDate = LinReg.predict_value(dates, data)
                 data = np.append(data, nextData)
                 dates = np.append(dates, nextDate)
 

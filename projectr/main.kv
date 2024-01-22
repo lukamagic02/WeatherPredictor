@@ -1,7 +1,6 @@
 ScreenManager:
     HomeScreen:
     SecondScreen:
-    PredictionScreen:
 
 <HomeScreen>:
     name: "homeScreen"
@@ -61,16 +60,6 @@ ScreenManager:
             width: dp(300)
             pos_hint: {'center_x': 0.6, 'center_y': 0.23}
 
-<PredictionScreen>:
-    name: "predictionScreen"
-    Screen:
-        BoxLayout:
-            orientation: "vertical"
-            MDTopAppBar:
-                left_action_items: [["arrow-left-bold-box", lambda x: setattr(root.manager, 'current', 'secondScreen')]]
-                title: "Weather Prediction Application"
-            Widget:
-
 <SecondScreen>:
     name: "secondScreen"
 
@@ -103,12 +92,6 @@ ScreenManager:
 
                 ScrollView:
                     MDList:
-                        OneLineIconListItem:
-                            text: "Weather Prediction"
-                            on_press: root.manager.current = "predictionScreen"
-                            IconLeftWidget:
-                                icon: "chart-bubble"
-
                         OneLineIconListItem:
                             text: "Download Data"
                             on_press: root.download_data_summary()
